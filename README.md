@@ -1,2 +1,2 @@
-# PharmacyStore_react_node
+# PharmacyStore
 # Ecommerce-website
