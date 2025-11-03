@@ -4,9 +4,12 @@ const bcrypt = require('bcryptjs')
 
 // register a new user
 exports.register = async (req, res) => {
+    console.log('Registration request received:', req.body);
+    
     try {
         // Validate request body
         if (!req.body) {
+            console.log('No request body provided');
             return res.status(400).json({ 
                 success: false,
                 message: 'Request body is required' 
@@ -14,35 +17,34 @@ exports.register = async (req, res) => {
         }
 
         const { name, email, password } = req.body;
+        console.log('Registration attempt for:', { name, email });
         
-        // Validate required fields
+        
         if (!name || !email || !password) {
+            console.log('Missing required fields');
             return res.status(400).json({ 
                 success: false,
                 message: 'All fields are required' 
             });
         }
 
-        // Check if user already exists
         let user = await User.findOne({ email });
         if (user) {
+            console.log('User already exists:', email);
             return res.status(400).json({ 
                 success: false,
                 message: 'User already exists' 
             });
         }
 
-        // Create new user
         user = await User.create({ name, email, password });
 
-        // Create JWT payload
         const payload = {
             user: {
                 id: user.id
             }
         };
 
-        // Sign JWT
         jwt.sign(
             payload,
             process.env.JWT_SECRET,
@@ -81,7 +83,6 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        // Validate request body
         if (!req.body) {
             return res.status(400).json({ 
                 success: false,
@@ -91,7 +92,6 @@ exports.login = async (req, res) => {
 
         const { email, password } = req.body;
 
-        // Validate required fields
         if (!email || !password) {
             return res.status(400).json({ 
                 success: false,
@@ -99,7 +99,6 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Check if user exists
         const user = await User.findOne({ email }).select('+password');
         if (!user) {
             return res.status(400).json({ 
@@ -108,7 +107,6 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Check password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ 
@@ -117,14 +115,12 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Create JWT payload
         const payload = {
             user: {
                 id: user.id
             }
         };
 
-        // Sign JWT
         jwt.sign(
             payload,
             process.env.JWT_SECRET,

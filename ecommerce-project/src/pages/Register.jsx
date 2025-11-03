@@ -50,85 +50,7 @@ const Register = () => {
             setServerError('');
         }
     }
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     const formErrors = validateForm();
-    //     if (Object.keys(formErrors).length > 0) {
-    //         setErrors(formErrors);
-    //         return;
-    //     }
-    //     setIsLoading(true);
-    //     try {
-    //         const response = await fetch('http://localhost:8000/api/auth/register', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Accept': 'application/json'
-    //             },
-    //             body: JSON.stringify({
-    //                 name: form.name,
-    //                 email: form.email,
-    //                 password: form.password,
-    //             })
-    //         });
 
-    //         // First check if we have a response body
-    //         const text = await response.text();
-    //         const data = await response.json();
-
-
-    //         if (!response.ok) {
-    //             console.log(response.status);
-    //             throw new Error(data.message || 'Registration failed. Please try again.');
-    //         }
-
-    //         // If we get here, registration was successful
-    //         console.log('Registration successful:', data);
-    //         navigate('/login');
-    //     } catch (error) {
-    //         console.error('Registration error:', error);
-    //         setServerError(error.message || 'Failed to connect to the server. Please try again.');
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     const formErrors = validateForm();
-    //     if (Object.keys(formErrors).length > 0) {
-    //         setErrors(formErrors);
-    //         return;
-    //     }
-    //     setIsLoading(true);
-    //     try {
-    //         const response = await axios.post('http://localhost:8000/api/auth/register', {
-    //             name: form.name,
-    //             email: form.email,
-    //             password: form.password,
-    //         });
-
-    //         // Axios automatically parses JSON and puts it in response.data
-    //         console.log('Registration successful:', response.data);
-    //         navigate('/login');
-
-    //     } catch (error) {
-    //         console.error('Registration error:', error);
-
-    //         // Handle axios error response
-    //         if (error.response) {
-    //             // Server responded with error status
-    //             setServerError(error.response.data.message || 'Registration failed. Please try again.');
-    //         } else if (error.request) {
-    //             // Request was made but no response received
-    //             setServerError('Failed to connect to the server. Please try again.');
-    //         } else {
-    //             // Something else happened
-    //             setServerError(error.message || 'An error occurred. Please try again.');
-    //         }
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('Form submitted!'); // Add this
@@ -140,21 +62,24 @@ const Register = () => {
         }
 
         setIsLoading(true);
-        console.log('Sending request...', form); 
+        console.log('Sending request...', form);
 
         try {
-            const response = await axios.post('http://localhost:8000/api/auth/register', {
+            const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+            const apiUrl = `${baseUrl}/api/auth/register`;
+            console.log('Making request to:', apiUrl);
+            const response = await axios.post(apiUrl, {
                 name: form.name,
                 email: form.email,
                 password: form.password,
             });
 
-            console.log('Success!', response.data); 
+            console.log('Success!', response.data);
             navigate('/login');
 
         } catch (error) {
-            console.error('Full error object:', error); 
-            console.error('Error response:', error.response); 
+            console.error('Full error object:', error);
+            console.error('Error response:', error.response);
 
             if (error.response) {
                 setServerError(error.response.data.message || 'Registration failed. Please try again.');

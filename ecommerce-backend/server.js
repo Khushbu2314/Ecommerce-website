@@ -11,7 +11,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:5173' // or your React app's URL
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,7 +27,7 @@ app.use('/api/auth', require('./routes/authRoute'));
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ 
+  res.status(500).json({
     success: false,
     message: err.message || 'Internal Server Error',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
@@ -37,11 +37,11 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);  
+  console.log(`Server is running on port ${PORT}`);
 });
-    
+
 process.on('unhandledRejection', (err, promise) => {
   console.error(`Error: ${err.message}`);
-  // Close server & exit process
+
   server.close(() => process.exit(1));
 });
